@@ -1,0 +1,872 @@
+You are an engineering coding agent for Stride.
+
+# Code Organization
+
+## Top-Level Directory Structure
+```
+/
+├── app/         # Main application code and business logic
+├── config/      # All configuration and initialization files
+├── .github/     # GitHub specific configurations
+├── storage/     # File storage and persistence
+├── tmp/         # Temporary files and cache
+├── log/         # Application logs
+├── vendor/      # Third-party code
+```
+
+## Folder Documentation
+1. Major folder contains a `README.md` file that explains:
+   - Folder's specific purpose.
+   - Code organization, purpose of important files / folders.
+   - Guidelines of how to make changes.
+2. Always read `README.md` before adding code to a folder
+3. Keep `README.md` up to date when patterns change
+4. Consider adding this file, when number of files in the folder is getting a lot and hard to navigate.
+
+## File Naming Conventions
+
+### Ruby Files
+- Controllers: `snake_case_controller.rb`
+- Models: `snake_case.rb`
+- Services: `snake_case_service.rb`
+- Jobs: `snake_case_job.rb`
+- Mailers: `snake_case_mailer.rb`
+- Helpers: `snake_case_helper.rb`
+
+### JavaScript Files
+- Controllers: `camelCaseController.js`
+- Entry point: `application.js`
+
+### Asset Files
+- Images: `kebab-case.png`
+- Stylesheets: `kebab-case.css`
+
+## Module Organization
+- Use modules to namespace related functionality
+- Keep module nesting to maximum 2 levels
+- Example: `Framework::Connection::WebsocketPool`
+
+## File Location Rules
+1. New code goes in the appropriate top-level directory based on its purpose
+2. Each directory should have a clear, single responsibility
+3. Configuration stays in `config/`
+4. Third-party code goes in `vendor/`
+5. Temporary files belong in `tmp/`
+
+## Best Practices
+1. Follow the established naming conventions strictly
+2. Keep files focused and single-purpose
+3. Use appropriate namespacing for related code
+4. Maintain clear separation of concerns between directories
+5. Don't create new top-level directories without team discussion
+6. Always read and follow folder-specific `README.md` before adding code
+
+# Documentation
+
+## Documentation Philosophy
+1. Documentation serves dual audiences:
+   - Human reviewers for code review and maintenance
+   - AI agents for code analysis and assistance
+2. Optimize documentation for both readability and machine parsing
+3. Prioritize clarity and context over brevity
+
+## Ruby Documentation Standards
+1. Use YARD/RDoc style documentation
+2. Document all public methods and classes
+3. Include type information using Sorbet annotations
+4. Document business logic and complex queries
+5. Keep documentation DRY (Don't Repeat Yourself)
+
+## Code Commentary Guidelines
+1. Add inline comments for logical sections:
+   ```ruby
+   # Calculate user permissions based on role and team membership
+   permissions = user.role_permissions
+   permissions.merge!(team_permissions) if user.team_member?
+
+   # Apply special override rules for admin users
+   if user.admin?
+     permissions.merge!(admin_overrides)
+   end
+   ```
+
+2. Document complex algorithms with step-by-step explanations:
+   ```ruby
+   def calculate_score
+     # Step 1: Gather base metrics
+     base_metrics = collect_base_metrics
+
+     # Step 2: Apply weight factors based on user level
+     weighted_score = apply_weights(base_metrics)
+
+     # Step 3: Adjust for seasonal bonuses
+     apply_seasonal_adjustments(weighted_score)
+   end
+   ```
+
+3. Include context and reasoning for non-obvious decisions:
+   ```ruby
+   # Using pessimistic locking here to prevent race conditions
+   # during concurrent balance updates
+   Account.transaction do
+     account.lock!
+     account.update!(balance: new_balance)
+   end
+   ```
+
+## Required Documentation Elements
+1. **Classes/Modules**
+   - Purpose and responsibility
+   - Key attributes and relationships
+   - Usage examples for complex interfaces
+
+2. **Methods**
+   - Parameters and return values
+   - Side effects and exceptions
+   - Usage examples for non-obvious cases
+   - Business logic explanations
+
+3. **Database**
+   - Relationships and associations
+   - Validations and constraints
+   - Indexes and performance considerations
+   - Enum definitions and meanings
+
+## Documentation Format
+```ruby
+# frozen_string_literal: true
+
+# Manages user authentication and profile data
+#
+# @example
+#   user = User.authenticate!("email@example.com", "password")
+#   user.update_profile(name: "New Name")
+#
+# @!attribute [r] email
+#   @return [String] User's email address
+# @!attribute role
+#   @return [String] User's role (admin/member/guest)
+class User < ApplicationRecord
+  # @param email [String] User's email address
+  # @param password [String] Plain text password
+  # @return [User] Authenticated user
+  # @raise [AuthenticationError] If credentials invalid
+  sig { params(email: String, password: String).returns(User) }
+  def self.authenticate!(email, password)
+    # Implementation
+  end
+end
+```
+
+## Folder Documentation
+1. Each folder must contain `README.md` explaining:
+   - Folder purpose and scope
+   - File listing with descriptions
+   - Key patterns and conventions
+   - Dependencies and relationships
+
+## `README.md` Format
+```markdown
+# [Folder Name]
+
+## Purpose
+[Brief description of folder responsibility]
+
+## Contents
+[List and description of files/patterns]
+
+## Conventions
+[Folder-specific rules and patterns]
+
+## Dependencies
+[Related folders and components]
+```
+
+## Documentation Updates
+1. Update documentation when:
+   - Adding new code
+   - Changing existing behavior
+   - Fixing bugs
+   - Refactoring code
+2. Review documentation in PRs
+3. Keep `README.md` files current
+
+## AI-Friendly Documentation
+1. Use consistent formatting and structure
+2. Include explicit type information
+3. Provide clear section markers and hierarchies
+4. Use standardized comment markers for different purposes:
+   ```ruby
+   # TODO: Mark future work
+   # FIXME: Mark issues needing attention
+   # NOTE: Add important context
+   # OPTIMIZE: Mark performance considerations
+   ```
+5. Document edge cases and error scenarios explicitly
+6. Include links to related code and documentation
+
+# Testing
+
+## Running Tests
+
+### Unit Tests
+```bash
+# Run all unit tests
+bin/rspec
+
+# Run specific test file
+bin/rspec spec/models/user_spec.rb
+bin/rspec spec/services/payment_processor_spec.rb
+
+# Run specific test by line number
+bin/rspec spec/models/user_spec.rb:42
+
+# Run with documentation format
+bin/rspec --format documentation
+
+# Run tests that match specific text
+bin/rspec -e "successful payment"
+```
+
+### Troubleshooting
+If encountering multiple configuration errors during test runs:
+1. This may indicate VSCode terminal environment issues
+2. Verify Ruby version is 3.x (not 2.x)
+3. Stop adding more files if this occurs
+4. Alert the developer for terminal environment resolution
+
+### Integration Tests
+```bash
+# Run all request specs
+bin/rspec spec/requests/
+
+# Run all system specs
+bin/rspec spec/system/
+
+# Run specific request spec
+bin/rspec spec/requests/api/v1/users_spec.rb
+
+# Run specific system spec
+bin/rspec spec/system/authentication_spec.rb
+```
+
+### Test Database Setup
+```bash
+# Prepare test database
+bin/rails db:test:prepare
+
+# Reset test database
+bin/rails db:test:reset
+```
+
+### Coverage Report
+```bash
+# Run tests with coverage report
+COVERAGE=true bin/rspec
+
+# Coverage report will be generated in coverage/index.html
+```
+
+## Test File Organization
+```
+spec/
+├── models/                 # Unit tests for models
+├── services/              # Unit tests for service objects
+├── controllers/           # Unit tests for controllers
+├── requests/             # Integration tests for API endpoints
+├── system/               # Browser-based integration tests
+├── factories/            # Factory Bot definitions
+├── support/              # Test helpers and shared config
+└── spec_helper.rb        # RSpec configuration
+```
+
+## Core Testing Requirements
+1. Integration Tests (End-to-End)
+   - Required for all endpoints
+   - Must verify complete request/response cycle
+   - Test both success and failure scenarios
+   - Verify side effects (DB changes, jobs, emails)
+
+2. Unit Tests
+   - Required for every class
+   - Must achieve high test coverage (>95%)
+   - Test both public and protected methods
+   - Cover edge cases and error scenarios
+
+## Integration Tests Structure
+```ruby
+# spec/requests/api/v1/users_controller_spec.rb
+RSpec.describe "API::V1::Users", type: :request do
+  describe "POST /api/v1/users" do
+    context "with valid parameters" do
+      let(:valid_params) { { user: attributes_for(:user) } }
+
+      it "creates user with complete flow" do
+        expect {
+          post "/api/v1/users", params: valid_params
+        }.to change(User, :count).by(1)
+          .and change(AuditLog, :count).by(1)
+          .and have_enqueued_job(WelcomeEmailJob)
+
+        expect(response).to have_http_status(:created)
+        expect(json_response).to include(
+          "email" => valid_params[:user][:email],
+          "status" => "active"
+        )
+      end
+    end
+
+    context "with invalid parameters" do
+      let(:invalid_params) { { user: attributes_for(:user, email: nil) } }
+
+      it "returns validation errors" do
+        post "/api/v1/users", params: invalid_params
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+end
+```
+
+## Unit Tests Structure
+```ruby
+# spec/services/payment_processor_spec.rb
+RSpec.describe PaymentProcessor do
+  describe "#process" do
+    subject(:processor) { described_class.new(payment) }
+    let(:payment) { create(:payment) }
+
+    it "processes payment successfully" do
+      expect(ExternalPaymentService).to receive(:charge).and_return(true)
+      expect(processor.process).to be_success
+    end
+
+    context "when external service fails" do
+      before do
+        allow(ExternalPaymentService).to receive(:charge)
+          .and_raise(PaymentError)
+      end
+
+      it "handles failure gracefully" do
+        result = processor.process
+        expect(result).to be_failure
+        expect(result.error).to be_present
+      end
+    end
+  end
+end
+```
+
+## Coverage Requirements
+1. Line Coverage: Minimum 95%
+2. Branch Coverage: Minimum 95%
+3. Method Coverage: Minimum 95%
+
+## Test Categories to Include
+1. Data Validation
+2. Business Logic
+3. Error Handling
+4. Edge Cases
+5. Authorization
+6. Authentication
+7. API Contracts
+8. Database Operations
+9. Background Jobs
+10. External Service Interactions
+
+## Best Practices
+1. Use factories for test data
+2. Mock external services
+3. Use shared examples for common behavior
+4. Keep tests focused and isolated
+5. Use meaningful test descriptions
+6. Follow Arrange-Act-Assert pattern
+7. Clean up test data after each run
+8. Avoid test interdependence
+
+## Test Performance
+1. Use database cleaner strategy
+2. Minimize unnecessary database queries
+3. Use appropriate test doubles
+4. Parallelize test suite when possible
+
+# Pull Requests
+
+## Core Principles
+1. Single Critical Change
+   - One significant change per PR (<50 lines)
+   - Test files don't count toward line limit
+   - Supporting changes (docs, tests) can be included
+   - Use stacked PRs for dependent changes
+
+2. Clear Scope Definition
+   - Critical files clearly identified
+   - Changes logically grouped
+   - Dependencies explicitly stated
+   - Impact clearly documented
+
+## PR Structure
+
+### Title Format
+```
+[Type]: Brief description
+
+Types:
+- feat: New feature
+- fix: Bug fix
+- refactor: Code restructuring
+- docs: Documentation updates
+- test: Test additions/updates
+- chore: Maintenance tasks
+```
+
+### Description Template
+```markdown
+## Overview
+[Brief description of the change]
+
+## Critical Changes
+- File: `path/to/critical/file.rb`
+- Type: [Migration/Model/Controller/etc]
+- Lines Changed: XX
+- Purpose: [Clear explanation]
+
+## Implementation Details
+- [Technical details]
+- [Design decisions]
+- [Trade-offs considered]
+
+## Testing
+- [ ] Unit tests
+- [ ] Integration tests
+- [ ] Manual testing steps
+
+## Screenshots/Recordings
+[If applicable]
+
+## Related PRs
+- Depends on: #XXX
+- Parent PR: #XXX
+```
+
+## Stacked PR Workflow
+
+### 1. Creating Stacks
+```bash
+# Create first feature branch
+gt create -am "DB Migration: Add user_roles table"
+
+# Stack subsequent changes
+gt create -am "Feature: Add UserRole model"
+
+# Review stack
+gt log
+```
+
+### 2. Managing Changes
+```bash
+# Update parent branch
+gt modify -a  # Auto-restacks dependent branches
+
+# Submit stack
+gt submit
+```
+
+### 3. Stack Organization Examples
+```
+Feature: User Roles Implementation
+1. DB Migration: Add user_roles table
+   - db/migrate/xxx_add_user_roles.rb
+   - spec/models/user_role_spec.rb
+
+2. Model: Add UserRole model
+   - app/models/user_role.rb
+   - app/models/user.rb (association)
+   - spec/models/user_spec.rb
+
+3. API: User roles endpoints
+   - app/controllers/api/v1/user_roles_controller.rb
+   - spec/requests/api/v1/user_roles_spec.rb
+
+4. UI: User role management
+   - app/javascript/controllers/user_roles_controller.js
+   - app/views/user_roles/*.erb
+```
+
+# Memory Management
+
+## Overview
+The `.memory` file in the root directory serves as a persistent knowledge base for AI agents.
+This file helps track insights, issues, and maintain context across different AI interactions.
+
+## File Structure
+```
+.memory
+├── Long Term     # Strategic improvements and feature suggestions
+├── Short Term    # Immediate issues and high-priority concerns
+├── Learning      # AI agent feedback for process improvements
+└── History       # Log of AI interactions and findings
+```
+
+## Reading Rules
+1. Always read entire file before making updates
+2. Priority order: Short Term > Learning > History > Long Term
+3. Use History to understand past decisions
+4. Check for related entries before adding new ones
+
+## Writing Rules
+1. Long Term Entry Format:
+   ```markdown
+   - Category (Refactoring/Feature/etc):
+     1. Clear action item
+        - Supporting context
+        - Reasoning
+        Related to: #<entry number> (if applicable)
+   ```
+
+2. Short Term Entry Format:
+   ```markdown
+   - [PRIORITY] Issue description
+     - File: `path/to/file`
+     - Context: Brief explanation
+     Related to: #<entry number> (if applicable)
+   ```
+
+3. History Entry Format:
+   ```markdown
+   - [YYYY-MM-DD] Topic
+     - Finding/Action
+     - Impact/Result
+     - Recommendation
+   ```
+
+## Entry Management
+1. Priority Levels:
+   - [CRITICAL]: Must be addressed immediately
+   - [HIGH]: Should be addressed in current sprint
+   - [MEDIUM]: Important but not urgent
+   - [LOW]: Nice to have
+
+2. Entry Lifecycle:
+   - New issues -> Short Term
+   - Resolved issues -> History
+   - Pattern observations -> Long Term
+   - Update existing entries instead of duplicating
+
+3. When to Update:
+   - After code analysis
+   - When finding bugs/issues
+   - After suggesting improvements
+   - When resolving issues
+
+## Best Practices
+1. Always include file paths when referencing code
+2. Link related entries using entry numbers
+3. Remove resolved Short Term items
+4. Keep entries concise but informative
+5. Include context for future reference
+
+# Type Safety
+
+## Core Principles
+1. Progressive Type Enforcement
+   - All new code must be type-checked
+   - Existing code upgraded incrementally
+   - Critical paths prioritized for strict typing
+   - Runtime checks in production for critical flows
+
+2. Strictness Levels
+   - `# typed: false` - Legacy code only
+   - `# typed: true` - Minimum for new code
+   - `# typed: strict` - Required for models/services
+   - `# typed: strong` - Required for critical paths
+
+## Type Signatures
+
+### Model Type Signatures
+```ruby
+# typed: strict
+class User < ApplicationRecord
+  extend T::Sig
+
+  sig { returns(String) }
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
+  sig do
+    params(
+      attributes: T::Hash[Symbol, T.untyped],
+      options: T::Hash[Symbol, T.untyped]
+    ).returns(T::Boolean)
+  end
+  def update_profile(attributes:, options: {})
+    update(attributes.merge(options))
+  end
+end
+```
+
+### Controller Type Signatures
+```ruby
+# typed: strict
+class UsersController < ApplicationController
+  extend T::Sig
+
+  sig { void }
+  def index
+    @users = T.let(User.active, T::Array[User])
+  end
+
+  sig { returns(T.nilable(User)) }
+  def current_user
+    T.cast(@current_user, T.nilable(User))
+  end
+end
+```
+
+### Service Type Signatures
+```ruby
+# typed: strict
+class PaymentProcessor
+  extend T::Sig
+
+  sig do
+    params(
+      amount: Integer,
+      currency: String,
+      user: User
+    ).returns(Result)
+  end
+  def process(amount:, currency:, user:)
+    # Implementation
+  end
+end
+```
+
+## Type Definitions
+
+### Custom Types
+```ruby
+module Types
+  class Result < T::Struct
+    const :success, T::Boolean
+    const :data, T.untyped
+    const :errors, T::Array[String]
+  end
+
+  class Money < T::Struct
+    const :amount, Integer
+    const :currency, String
+  end
+end
+```
+
+### Enums
+```ruby
+class Status < T::Enum
+  enums do
+    Active = new
+    Pending = new
+    Inactive = new
+  end
+end
+```
+
+## Testing Requirements
+
+1. Type Checking in Tests
+```ruby
+# typed: strict
+RSpec.describe User do
+  extend T::Sig
+
+  sig { void }
+  def setup_test_data
+    @user = T.let(create(:user), User)
+  end
+end
+```
+
+2. Coverage Requirements
+   - Minimum 90% type coverage for new code
+   - Type coverage checked in CI pipeline
+   - No type errors in production code
+   - Runtime checks for critical paths
+
+## CI Integration
+
+1. Type Checking Commands
+```bash
+# Basic type checking
+srb tc
+
+# With metrics
+srb tc --metrics
+
+# Generate type coverage report
+srb tc --metrics-file=type-coverage.json
+```
+
+2. Required Checks
+   - Type checking must pass
+   - No untyped code in critical paths
+   - Type coverage meets minimum threshold
+   - Runtime checks configured correctly
+
+## Best Practices
+
+1. Type Declaration
+   - Use `T.let` for variable declarations
+   - Use `T.cast` for type assertions
+   - Use `T.must` for non-nil assertions
+   - Use `T.nilable` for optional values
+
+2. Collection Types
+```ruby
+T::Array[User]           # Array of Users
+T::Hash[Symbol, String]  # Hash with Symbol keys, String values
+T::Set[Integer]         # Set of Integers
+T::Enumerable[String]   # Any enumerable of Strings
+```
+
+3. Generic Types
+```ruby
+T.type_parameter(:T)    # Define type parameter
+T.all(User, Comparable) # Type must implement all
+T.any(String, Symbol)   # Union type
+```
+
+4. Proc Types
+```ruby
+T.proc.params(arg0: String).returns(Integer)
+T.proc.bind(User).void
+```
+
+## Error Handling
+
+1. Type Errors
+```ruby
+begin
+  T.let(potentially_nil, String)
+rescue TypeError => e
+  # Handle type error
+end
+```
+
+2. Runtime Checks
+```ruby
+T::Configuration.enable_checking_for_sigs
+T::Configuration.default_checked_level = :always
+```
+
+## Migration Strategy
+
+1. New Code
+   - Must be `# typed: strict` minimum
+   - Full type signatures required
+   - No `T.untyped` in public APIs
+   - Test coverage with types
+
+2. Existing Code
+   - Identify critical paths
+   - Add types incrementally
+   - Start with public APIs
+   - Add runtime checks strategically
+
+3. Priority Order
+   - Models
+   - Services
+   - Controllers
+   - Jobs
+   - Helpers
+   - Views
+
+## Tooling
+
+1. Required Tools
+   - Sorbet (`srb`)
+   - Tapioca (`tapioca`)
+   - RBI files
+   - IDE plugins
+
+2. Development Flow
+   - Generate RBI files
+   - Add type signatures
+   - Run type checker
+   - Fix type errors
+   - Commit with coverage
+
+## Documentation
+
+1. Type Documentation
+   - Document complex types
+   - Explain type decisions
+   - Note runtime implications
+   - Document type assumptions
+
+2. Example
+```ruby
+# @param user [User] The authenticated user
+# @param options [T::Hash[Symbol, T.untyped]] Processing options
+# @return [Result] Processing result with type-safe data
+sig do
+  params(
+    user: User,
+    options: T::Hash[Symbol, T.untyped]
+  ).returns(Result)
+end
+def process(user:, options: {})
+```
+
+# Workflow
+
+## Six-Phase Development Workflow
+
+### Phase 1: High-Level Proposal
+- Present high-level overview of changes
+- Reference relevant files and folders
+- Explain architectural decisions
+- NO code changes
+- RULE: Only propose what's explicitly requested - no over engineering
+
+### Phase 2: Detail Discussion
+- Interactive Q&A to refine design
+- Document technical specifications
+- Identify potential risks
+- Get explicit approval before proceeding
+- NO code changes
+- RULE: Keep scope strictly limited to requirements - no feature creep
+
+### Phase 3: Prototyping
+- Implement core functionality
+- Focus on working code
+- Get feedback and iterate
+- Get approval before proceeding
+- Assume server is running
+- RULE: Write minimum code needed to fulfill requirements - no premature optimization
+
+### Phase 4: Quality Assurance
+- Add/update documentation
+- Write comprehensive tests
+- Apply type safety
+- Follow style guidelines
+- Update folder README.md files
+
+### Phase 5: PR Creation
+- Follow stacked PR workflow
+- Use Graphite commands
+- Include PR templates
+- Focus on single critical changes
+
+### Phase 6: Memory Management
+- Update .memory file
+- Document insights
+- Record history
+- Create separate PR
+
+# Instructions
+
+1. Follow this workflow by default
+2. Skip workflow only when explicitly specified asked to skip workflow
+3. Read and adhere to all guidelines in this document
+4. Follow type safety, documentation, and organization rules strictly
