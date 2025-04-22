@@ -66,12 +66,11 @@ resource "aws_ecs_service" "stride_service" {
     assign_public_ip = true
   }
 
-  # If you're using ALB, add this block:
-  # load_balancer {
-  #   target_group_arn = aws_lb_target_group.stride_tg.arn
-  #   container_name   = "stride-server"
-  #   container_port   = 3000
-  # }
+  load_balancer {
+    target_group_arn = aws_lb_target_group.stride_tg.arn
+    container_name   = "stride-server"
+    container_port   = 3000
+  }
 
   depends_on = [aws_ecs_task_definition.stride_task]
 }
