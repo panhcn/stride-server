@@ -12,3 +12,6 @@ variable "private_subnet_ids" {
 }
 variable "ecs_service_sg_id" {}
 variable "db_security_group_id" {}
+variable "vpc_id" {
+  type = string
+}
