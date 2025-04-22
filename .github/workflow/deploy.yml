@@ -1,0 +1,59 @@
+name: Build + Deploy to ECS & Terraform
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Terraform + Build + Deploy
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: us-west-2
+      ECR_REPO: ${{ secrets.ECR_REPOSITORY }}
+      ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+      ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform Init
+        working-directory: infra
+        run: terraform init -backend-config=prod/backend-config.hcl
+
+      - name: Terraform Apply
+        working-directory: infra
+        run: terraform apply -auto-approve -var-file=prod/terraform.tfvars
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push Docker image
+        run: |
+          docker buildx create --use || true
+          docker buildx build \
+            --platform linux/amd64 \
+            --tag $ECR_REPO:latest \
+            --push .
+
+      - name: Deploy ECS service
+        run: |
+          aws ecs update-service \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE \
+            --force-new-deployment
