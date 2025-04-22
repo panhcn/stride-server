@@ -27,12 +27,12 @@
 threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
-# Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-port ENV.fetch("PORT", 3000)
-
-# In production (ECS), bind explicitly to 0.0.0.0 so external traffic works
 if ENV["RAILS_ENV"] == "production"
+  # In ECS: bind to external interface
   bind "tcp://0.0.0.0:#{ENV.fetch("PORT", 3000)}"
+else
+  # In local dev: let Puma default to localhost
+  port ENV.fetch("PORT", 3000)
 end
 
 # Allow puma to be restarted by `bin/rails restart` command.
