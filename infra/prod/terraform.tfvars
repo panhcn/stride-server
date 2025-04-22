@@ -19,6 +19,7 @@ ecs_execution_role = "arn:aws:iam::315183407242:role/ecsTaskExecutionRole"
 ecs_task_role = "arn:aws:iam::315183407242:role/ecsTaskAppRole"
 
 # Public subnets for resources that need public internet access
+vpc_id = "vpc-04b2aaa8413db70b3"
 public_subnet_ids = [
   "subnet-0a696205e8869d771", # us-west-2a
   "subnet-027c39086df14b8de"  # us-west-2c
