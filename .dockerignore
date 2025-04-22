@@ -4,3 +4,4 @@ tmp/*
 *.log
 node_modules
 vendor/bundle
+infra/.terraform/
