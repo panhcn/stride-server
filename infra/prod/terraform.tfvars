@@ -19,6 +19,7 @@ ecs_execution_role = "arn:aws:iam::315183407242:role/ecsTaskExecutionRole"
 ecs_task_role = "arn:aws:iam::315183407242:role/ecsTaskAppRole"
 
 # Public subnets for resources that need public internet access
+vpc_id = "vpc-04b2aaa8413db70b3"
 public_subnet_ids = [
   "subnet-0a696205e8869d771", # us-west-2a
   "subnet-027c39086df14b8de"  # us-west-2c
@@ -35,3 +36,9 @@ ecs_service_sg_id = "sg-005a382efe9844d84" # 🔁 replace
 
 # Security group for RDS (must allow inbound from ECS SG on port 5432)
 db_security_group_id = "sg-0d09fe954daf698bd" # 🔁 replace
+
+# S3 backend configuration for Terraform state storage
+bucket         = "stride-terraform-state"
+key            = "stride/prod/terraform.tfstate"
+dynamodb_table = "terraform-locks"
+encrypt        = true
