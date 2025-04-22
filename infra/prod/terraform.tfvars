@@ -36,9 +36,4 @@ ecs_service_sg_id = "sg-005a382efe9844d84" # 🔁 replace
 
 # Security group for RDS (must allow inbound from ECS SG on port 5432)
 db_security_group_id = "sg-0d09fe954daf698bd" # 🔁 replace
-
-# S3 backend configuration for Terraform state storage
-bucket         = "stride-terraform-state"
-key            = "stride/prod/terraform.tfstate"
-dynamodb_table = "terraform-locks"
-encrypt        = true
+e
