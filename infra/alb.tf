@@ -13,9 +13,13 @@ resource "aws_lb_target_group" "stride_tg" {
   vpc_id      = var.vpc_id
 
   health_check {
-    path     = "/"
-    protocol = "HTTP"
-    port     = "traffic-port"
+    enabled             = true
+    path                = "/up"
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    interval            = 30
+    protocol            = "HTTP"
+    port                = "traffic-port"
   }
 }
 
