@@ -43,7 +43,6 @@ resource "aws_ecs_task_definition" "stride_task" {
         { name = "DB_USERNAME", value = local.db_credentials["username"] },
         { name = "DB_PASSWORD", value = local.db_credentials["password"] },
         { name = "DB_HOST", value = aws_db_instance.postgres.address },
-        { name = "FORCE_REVISION", value = "1" }, # Bump this to force task definition update
       ]
 
       logConfiguration = {
