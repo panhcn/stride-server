@@ -27,7 +27,7 @@ jobs:
           terraform_version: 1.6.6
 
       - name: Terraform Init
-        run: terraform init -backend-config=backend-config.hcl
+        run: terraform init -backend-config=prod/backend-config.hcl
 
       - name: Terraform Plan
         run: terraform plan -var-file=prod/terraform.tfvars
