@@ -14,9 +14,12 @@ db_username = "stride_server"
 rails_image_url = "315183407242.dkr.ecr.us-west-2.amazonaws.com/stride-server:latest"
 
 # IAM role that grants ECS permission to pull images and write logs
-ecs_execution_role = "arn:aws:iam::315183407242:role/ecsTaskExecutionRole"
+ecs_execution_role      = "arn:aws:iam::315183407242:role/ecsTaskExecutionRole"
+ecs_execution_role_name = "ecsTaskExecutionRole"
+
 # IAM role that the application assumes when running
-ecs_task_role = "arn:aws:iam::315183407242:role/ecsTaskAppRole"
+ecs_task_role      = "arn:aws:iam::315183407242:role/ecsTaskAppRole"
+ecs_task_role_name = "ecsTaskAppRole"
 
 # Public subnets for resources that need public internet access
 vpc_id = "vpc-04b2aaa8413db70b3"
