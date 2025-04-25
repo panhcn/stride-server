@@ -19,6 +19,11 @@ resource "aws_ecs_task_definition" "stride_task" {
   execution_role_arn       = var.ecs_execution_role
   task_role_arn            = var.ecs_task_role
 
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "X86_64"
+  }
+
   container_definitions = jsonencode([
     {
       name      = "stride-server"
@@ -60,6 +65,7 @@ resource "aws_ecs_service" "stride_service" {
   desired_count   = 1
   launch_type     = "FARGATE"
 
+  enable_execute_command = true
   network_configuration {
     subnets          = var.public_subnet_ids
     security_groups  = [var.ecs_service_sg_id]
