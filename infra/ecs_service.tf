@@ -43,6 +43,7 @@ resource "aws_ecs_task_definition" "stride_task" {
         { name = "DB_USERNAME", value = local.db_credentials["username"] },
         { name = "DB_PASSWORD", value = local.db_credentials["password"] },
         { name = "DB_HOST", value = aws_db_instance.postgres.address },
+        { name = "FORCE_REVISION", value = "1" }, # Bump this to force task definition update
       ]
 
       logConfiguration = {
@@ -53,6 +54,13 @@ resource "aws_ecs_task_definition" "stride_task" {
           awslogs-stream-prefix = "ecs"
         }
       }
+
+      secrets = [
+        {
+          name      = "SECRET_KEY_BASE"
+          valueFrom = data.aws_secretsmanager_secret.rails_secret_key_base.arn
+        }
+      ]
     }
   ])
 }
@@ -79,4 +87,13 @@ resource "aws_ecs_service" "stride_service" {
   }
 
   depends_on = [aws_ecs_task_definition.stride_task]
+
+  lifecycle {
+    ignore_changes       = [desired_count]
+    replace_triggered_by = [aws_ecs_task_definition.stride_task]
+  }
+}
+
+data "aws_secretsmanager_secret" "rails_secret_key_base" {
+  name = "stride/secret_key_base"
 }

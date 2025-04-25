@@ -3,7 +3,9 @@ variable "db_name" {}
 variable "db_username" {}
 variable "rails_image_url" {}
 variable "ecs_execution_role" {}
+variable "ecs_execution_role_name" {}
 variable "ecs_task_role" {}
+variable "ecs_task_role_name" {}
 variable "public_subnet_ids" {
   type = list(string)
 }
