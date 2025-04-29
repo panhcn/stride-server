@@ -12,3 +12,11 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem "rack-cors"
+gem 'sprockets-rails'
+
+# in your Gemfile
+group :development do
+  gem 'syntax_tree'
+  gem 'syntax_tree-rbs'
+  gem 'syntax_tree-haml'
+end
