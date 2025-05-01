@@ -40,6 +40,8 @@ module StrideServer
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = false
+    # Enable asset pipeline in API-only mode
+    config.assets.enabled = true
 
     config.middleware.use Rack::MethodOverride
     config.middleware.use ActionDispatch::Flash
