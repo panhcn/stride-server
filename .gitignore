@@ -36,3 +36,9 @@
 # Terraform cache
 infra/.terraform/
 infra/.terraform.lock.hcl
+
+# python
+/python/venv/
+
+# misc
+.DS_Store
