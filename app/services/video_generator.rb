@@ -26,21 +26,24 @@ class VideoGenerator
     image_file = fetch_image_tempfile(image_url)
     return unless image_file
 
-    # output = Tempfile.new(['video', '.mp4'], binmode: true)
-
-    final_path = Rails.root.join('public', 'output', 'generated_video.mp4').to_s
+    output = Tempfile.new(['video', '.mp4'], binmode: true)
 
     config = {
       background_video: Rails.root.join('public/assets/background.mp4').to_s,
       background_audio: Rails.root.join('public/assets/background.mp3').to_s,
-      output: final_path,
+      output: output.path,
       gap: 1,
       clips: [
         {
           voice: Rails.root.join('public/assets/seagate.mp3').to_s,
           blocks: [
-            { type: 'text', text: 'Hello World', "font-size": 72,
-              font: Rails.root.join('public/assets/Montserrat-ExtraBold.ttf').to_s, color: 'white' },
+            {
+              type: 'text',
+              text: 'Hello World',
+              "font-size": 72,
+              font: Rails.root.join('public/assets/Montserrat-ExtraBold.ttf').to_s,
+              color: 'white'
+            },
             { type: 'image', path: image_file.path }
           ]
         }
@@ -51,21 +54,25 @@ class VideoGenerator
       stdin.write(config.to_json)
       stdin.close
 
-      stdout.read
-      stderr_output = stderr.read
+      out = stdout.read
+      err = stderr.read
       status = wait_thr.value
 
+      Rails.logger.info("Python stdout: #{out}") unless out.empty?
+      Rails.logger.error("Python stderr: #{err}") unless err.empty?
+
       image_file.close!
-      image_file.unlink # Clean up image
-      # output.close
+      image_file.unlink
 
       if status.success?
-        Rails.logger.info("✅ Video generated successfully: #{final_path}")
+        Rails.logger.info("✅ Video generated successfully at #{output.path}")
+        return output.path
       else
-        Rails.logger.error("❌ Video generation failed: #{stderr_output}")
+        output.close
+        output.unlink
+        Rails.logger.error("❌ Video generation failed with exit code #{status.exitstatus}")
+        return nil
       end
     end
-
-    # output.unlink # Optionally delete video after use
   end
 end
