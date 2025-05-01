@@ -58,8 +58,9 @@ class VideoGenerator
       err = stderr.read
       status = wait_thr.value
 
-      Rails.logger.info("Python stdout: #{out}") unless out.empty?
-      Rails.logger.error("Python stderr: #{err}") unless err.empty?
+      Rails.logger.info("STDOUT:\n#{out}") unless out.empty?
+      Rails.logger.error("STDERR:\n#{err}") unless err.empty?
+      Rails.logger.error("Exit code: #{status.exitstatus}") if status
 
       image_file.close!
       image_file.unlink
