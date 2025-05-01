@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   db:
     image: postgres:17
@@ -11,6 +10,21 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+
+  rails:
+    build: .
+    container_name: stride-rails
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    environment:
+      DATABASE_URL: postgres://postgres:secret@db:5432/stride_development
+    stdin_open: true
+    tty: true
 
 volumes:
   pgdata:
