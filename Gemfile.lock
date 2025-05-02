@@ -87,6 +87,8 @@ GEM
       ruby2_keywords (>= 0.0.2)
     ast (2.4.3)
     base64 (0.2.0)
+    basic_yahoo_finance (0.5.2)
+      net-http-persistent (~> 4.0, >= 4.0.2)
     bcrypt (3.1.20)
     benchmark (0.4.0)
     bigdecimal (3.1.9)
@@ -124,6 +126,9 @@ GEM
     has_scope (0.8.2)
       actionpack (>= 5.2)
       activesupport (>= 5.2)
+    http-2 (1.1.1)
+    httpx (1.4.4)
+      http-2 (>= 1.0.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     inherited_resources (1.14.0)
@@ -167,6 +172,8 @@ GEM
     marcel (1.0.4)
     mini_mime (1.1.5)
     minitest (5.25.5)
+    net-http-persistent (4.0.5)
+      connection_pool (~> 2.2)
     net-imap (0.5.6)
       date
       net-protocol
@@ -346,7 +353,9 @@ PLATFORMS
 
 DEPENDENCIES
   activeadmin
+  basic_yahoo_finance
   devise
+  httpx
   pg (~> 1.1)
   puma (>= 5.0)
   rails (~> 8.0.2)
