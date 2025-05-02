@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/controllers/videos_controller.rb
 class VideosController < ApplicationController
   def generate
